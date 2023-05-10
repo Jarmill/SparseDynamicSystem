@@ -20,7 +20,7 @@ model = Model(optimizer_with_attributes(Mosek.Optimizer));
 set_optimizer_attribute(model, MOI.Silent(), true);
 gamma = @variable(model);
 
-model,info1 = add_psatz!(model, f-gamma, x, g, [], d, QUIET=true, CS=false, TS="block", Groebnerbasis=false)
+model,info1 = add_psatz!(model, f-gamma, x, g, [], d+1, QUIET=true, CS=true, TS="block")
 
 @objective(model, Max, gamma)
 optimize!(model)
