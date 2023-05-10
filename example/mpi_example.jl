@@ -1,3 +1,5 @@
+
+#Author: Jie Wang, https://github.com/wangjie212/SparseDynamicSystem/blob/main/example/example.jl
 using JuMP
 using Revise
 using MosekTools
