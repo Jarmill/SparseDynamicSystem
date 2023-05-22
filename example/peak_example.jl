@@ -12,22 +12,25 @@ n = 2
 @polyvar x[1:n]
 
 #system
-# f = [x[2]; -x[1] - x[2] + x[1]^3/3]
-f = -x;
+f = [x[2]; -x[1] - x[2] + x[1]^3/3]
+# f = -x;
 
 #support sets
 # Tmax = 0.1;
-Tmax = 3;
+# Tmax = 3;
+Tmax = 10;
 
 
-R0 = 0.1;
+R0 = 0.4;
 C0 = [1; 0];
-Box = 1.5;
+Box = 3;
 
 X = Box^2 .- [x[1]^2; x[2]^2];
 XT = [X; t*(1-t)]
 X0 = [R0^2 - sum((x-C0).^2)]
-d = 4;
+
+#order of polynomials/moments (2d)
+d = 3; 
 
 # objective to minimize
 p = -x[2]; 
