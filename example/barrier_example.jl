@@ -32,14 +32,14 @@ v, vc, vb = add_poly!(model, x, 2d)
 deg_change = 1; #floor(degree f/ 2), but I don't know how to take the degree of the polynomial array f
 # deg_change = 0;
 Lv =  sum(f .* differentiate(v, x));
-model,info1 = add_psatz!(model, Lv, [ x], [], [], d+deg_change, QUIET=true, CS=true, TS="block", SO=1, Groebnerbasis=false)
+model,info1 = add_psatz!(model, Lv,  x, [], [], d+deg_change, QUIET=true, CS=true, TS="block", SO=1, Groebnerbasis=false)
 
 #unsafe set
-model,info3 = add_psatz!(model, -v, [x], Xu, [], d, QUIET=true, CS=true, TS="block", SO=1, Groebnerbasis=false)
+model,info3 = add_psatz!(model, -v, x, Xu, [], d, QUIET=true, CS=true, TS="block", SO=1, Groebnerbasis=false)
 
 #initial condition
 epsilon = 1e-3;
-model,info3 = add_psatz!(model, v + epsilon, [x], X0, [], d, QUIET=true, CS=true, TS="block", SO=1, Groebnerbasis=false)
+model,info3 = add_psatz!(model, v + epsilon, x, X0, [], d, QUIET=true, CS=true, TS="block", SO=1, Groebnerbasis=false)
 
 @objective(model, Min, 0)
 optimize!(model)
@@ -50,3 +50,5 @@ if status != MOI.OPTIMAL
     println("solution status: $status")
 end
 objv = objective_value(model)
+
+v_rec = value.(vc)'*vb

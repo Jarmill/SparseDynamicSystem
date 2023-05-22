@@ -18,16 +18,11 @@ f = -x;
 #support sets
 # Tmax = 0.1;
 Tmax = 3;
-
-
-R0 = 0.1;
-C0 = [1; 0];
-Box = 1.5;
-
-X = Box^2 .- [x[1]^2; x[2]^2];
+X = [4-x[1]^2, 4-x[2]^2];
 XT = [X; t*(1-t)]
-X0 = [R0^2 - sum((x-C0).^2)]
-d = 4;
+# X0 = [0.1^2 - x[2]^2 - (x[1] - 1.5)^2]
+X0 = [1.5; 0];
+d = 3;
 
 # objective to minimize
 p = -x[2]; 
@@ -38,7 +33,7 @@ p = -x[2];
 model = Model(optimizer_with_attributes(Mosek.Optimizer))
 set_optimizer_attribute(model, MOI.Silent(), true)
 v, vc, vb = add_poly!(model, x, 2d)
-gamma = @variable(model); 
+# gamma = @variable(model); 
 
 #Lie derivative
 deg_change = 1; #floor(degree f/ 2), but I don't know how to take the degree of the polynomial array f
@@ -49,10 +44,12 @@ model,info1 = add_psatz!(model, -Lv, [t; x], XT, [], d+deg_change, QUIET=true, C
 #cost 
 model,info2 = add_psatz!(model, v-p, [t; x], XT, [], d, QUIET=true, CS=true, TS="block", Groebnerbasis=false)
 
-#initial condition
-v0 = subs(v, t=>0); #subs(p, y=>x^2)
-model,info3 = add_psatz!(model, gamma - v0, x, g, [], d, QUIET=true, CS=true, TS="block", Groebnerbasis=false)
-@objective(model, Min, gamma)
+#initial condition (supported at a single initial point)
+v0 = subs(v, [t;x]=>[0;X0]); 
+model,info2 = add_psatz!(model, v-p, [t; x], XT, [], d, QUIET=true, CS=true, TS="block", Groebnerbasis=false)
+# @constraint(model, c0, gamma-v0>=0);
+
+@objective(model, Min, v0)
 optimize!(model)
 status = termination_status(model)
 if status != MOI.OPTIMAL
