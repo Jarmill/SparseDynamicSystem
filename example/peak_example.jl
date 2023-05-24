@@ -40,7 +40,7 @@ p = -x[2];
 #model and auxiliary functions
 model = Model(optimizer_with_attributes(Mosek.Optimizer))
 set_optimizer_attribute(model, MOI.Silent(), true)
-v, vc, vb = add_poly!(model, x, 2d)
+v, vc, vb = add_poly!(model, [t; x], 2d)
 gamma = @variable(model); 
 
 #Lie derivative
@@ -54,7 +54,7 @@ model,info2 = add_psatz!(model, v-p, [t; x], XT, [], d, QUIET=true, CS=true, TS=
 
 #initial condition
 v0 = subs(v, t=>0); #subs(p, y=>x^2)
-model,info3 = add_psatz!(model, gamma - v0, x, g, [], d, QUIET=true, CS=true, TS="block", Groebnerbasis=false)
+model,info3 = add_psatz!(model, gamma - v0, x, X0, [], d, QUIET=true, CS=true, TS="block", Groebnerbasis=false)
 @objective(model, Min, gamma)
 optimize!(model)
 status = termination_status(model)
