@@ -44,8 +44,9 @@ v, vc, vb = add_poly!(model, [t; x], 2d)
 gamma = @variable(model); 
 
 #Lie derivative
-deg_change = 1; #floor(degree f/ 2), but I don't know how to take the degree of the polynomial array f
-# deg_change = 0;
+# deg_change = 1; #floor(degree f/ 2), but I don't know how to take the degree of the polynomial array f
+deg_change = 0;
+# model,info1 = add_psatz!(model, -Lv, [t; x], XT, [], d, QUIET=true, CS=true, TS="block", Groebnerbasis=false)
 Lv = differentiate(v, t) + Tmax * sum(f .* differentiate(v, x))
 model,info1 = add_psatz!(model, -Lv, [t; x], XT, [], d+deg_change, QUIET=true, CS=true, TS="block", Groebnerbasis=false)
 

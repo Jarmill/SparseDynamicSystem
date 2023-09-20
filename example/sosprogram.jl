@@ -10,7 +10,7 @@ n = 3
 @polyvar x[1:n]
 f = [(x[1]^2+x[2]^2-1/4)*x[1], (x[2]^2+x[3]^2-1/4)*x[2], (x[2]^2+x[3]^2-1/4)*x[3]]
 g = [1-x[1]^2, 1-x[2]^2, 1-x[3]^2]
-d = 3
+d = 4
 
 model = Model(optimizer_with_attributes(Mosek.Optimizer))
 set_optimizer_attribute(model, MOI.Silent(), true)
@@ -31,8 +31,6 @@ if status != MOI.OPTIMAL
     println("solution status: $status")
 end
 objv = objective_value(model)
-<<<<<<<< HEAD:example/mpi_example.jl
-========
 
 # retrieve Gram matrices
 GramMat = Vector{Vector{Vector{Union{Float64,Matrix{Float64}}}}}(undef, info1.cql)
@@ -46,4 +44,3 @@ end
 # retrieve moment matrices
 moment = [-dual(constraint_by_name(model, "con1[$i]")) for i=1:size(info1.tsupp, 2)]
 MomMat = get_moment_matrix(moment, info1.tsupp, info1.cql, info1.basis)
->>>>>>>> upstream/main:example/sosprogram.jl
